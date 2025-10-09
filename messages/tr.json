@@ -1,0 +1,52 @@
+{
+  "header": {
+    "logo": "del'fin",
+    "nav": {
+      "delphin": "Delphin",
+      "collection": "Koleksiyon",
+      "contact": "Iletisim"
+    },
+    "contactButton": "Ulasmak",
+    "languageSwitcher": {
+      "current": "TR",
+      "options": {
+        "ru": "RUS",
+        "tr": "TR",
+        "en": "EN"
+      }
+    }
+  },
+  "hero": {
+    "slides": [
+      {
+        "title": "Küvet, klozet, batarya ve lavabolar – estetik ve dayanıklılığı bir arada sunar",
+        "description": "Türkiye'de geliştirilen modern tasarımlar. Avrupa standartlarına uygun üretim, çevre dostu malzemeler ve uzun ömürlü kullanım garantisi."
+      },
+      {
+        "title": "Premium sıhhi tesisat çözümleri ile konforunuzu artırın",
+        "description": "Yüksek kaliteli malzemeler ve uzman montaj ekibi ile evinizde maksimum konfor sağlayın. Garantili hizmet ve 7/24 destek."
+      },
+      {
+        "title": "Modern banyo tasarımları ve yenilikçi çözümler",
+        "description": "Son teknoloji ürünleri ile banyonuzu dönüştürün. Su tasarrufu sağlayan sistemler ve şık tasarımlar bir arada."
+      }
+    ],
+    "downloadCatalog": "Katalog indir"
+  },
+  "categories": {
+    "title": "Her detayda tasarım ve işlevsellik",
+    "subtitle": "Konfor ve dayanıklılık önceliğimizdir",
+    "description": "Ürünlerimiz banyolara estetik ve pratiklik katıyor. Modern teknoloji ve kaliteli malzemelerle uzun yıllar sorunsuz kullanım sağlar."
+  },
+  "meta": {
+    "title": "Delfin - Premium Banyo Gereçleri ve Seramik | Türk Kalitesi",
+    "description": "Delfin Premium Banyo Ürünleri Klozet, lavabo, batarya, küvet premium kalitede. Avrupa standartlarında Türk üretimi. Kalite ve dayanıklılık garantisi.",
+    "keywords": "banyo gereçleri, klozet, lavabo, batarya, küvet, banyo seramikleri, türk banyo ürünleri, delfin, premium tesisat",
+    "ogTitle": "Delfin - Türkiye'den Premium Banyo Gereçleri",
+    "ogDescription": "Avrupa kalitesinde modern banyo gereçleri: klozet, lavabo, batarya. Çevre dostu malzemeler ve dayanıklılık garantisi.",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "author": "Delfin",
+    "copyright": "© 2025 Delfin. Tüm hakları saklıdır."
+  }
+}

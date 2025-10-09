@@ -1,0 +1,52 @@
+{
+  "header": {
+    "logo": "del'fin",
+    "nav": {
+      "delphin": "Delphin",
+      "collection": "Collection",
+      "contact": "Contact"
+    },
+    "contactButton": "Contact",
+    "languageSwitcher": {
+      "current": "EN",
+      "options": {
+        "ru": "RUS",
+        "tr": "TR", 
+        "en": "EN"
+      }
+    }
+  },
+  "hero": {
+    "slides": [
+      {
+        "title": "Baths, toilets, faucets and sinks – combining aesthetics and durability",
+        "description": "Modern designs developed in Latvia. European standard compliant production, eco-friendly materials and durable usage guarantee."
+      },
+      {
+        "title": "Premium plumbing solutions to enhance your comfort",
+        "description": "Ensure maximum comfort in your home with high-quality materials and professional installation team. Guaranteed service and 24/7 support."
+      },
+      {
+        "title": "Modern bathroom designs and innovative solutions",
+        "description": "Transform your bathroom with latest technology products. Water-saving systems and stylish designs all in one."
+      }
+    ],
+    "downloadCatalog": "Download catalog"
+  },
+  "categories": {
+    "title": "Design and functionality in every detail",
+    "subtitle": "Comfort and durability are our priority",
+    "description": "Our products add aesthetics and practicality to bathrooms. Modern technology and quality materials ensure reliable use for many years."
+  },
+  "meta": {
+    "title": "Delfin - Premium Bathroom Fixtures & Ceramics | Turkish Quality",
+    "description": "Delfin Premium Bathware  Toilets, sinks, faucets, bathtubs of premium quality. Turkish production meeting European standards. Quality and durability guaranteed.",
+    "keywords": "bathroom fixtures, toilets, sinks, faucets, bathtubs, bathroom ceramics, turkish bathware, delfin, premium plumbing",
+    "ogTitle": "Delfin - Premium Bathroom Fixtures from Turkey",
+    "ogDescription": "Modern bathroom fixtures of European quality: toilets, sinks, faucets. Eco-friendly materials and durability guarantee.",
+    "ogType": "website",
+    "twitterCard": "summary_large_image",
+    "author": "Delfin",
+    "copyright": "© 2025 Delfin. All rights reserved."
+  }
+}
