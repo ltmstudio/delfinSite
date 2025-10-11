@@ -26,10 +26,11 @@ const Video = () => {
                       muted
                       loop
                       playsInline
+                      preload="metadata"
                       className="video__player-element"
                     >
                       <source src="/showroom_video.mp4" type="video/mp4" />
-                      Ваш браузер не поддерживает видео элемент.
+                      <p>Ваш браузер не поддерживает видео элемент.</p>
                     </video>
                   </div>
                 </div>

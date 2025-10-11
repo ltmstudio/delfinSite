@@ -29,14 +29,14 @@ export const productsTranslations = {
         { id: 15, name: 'Washdown Rimless 9001', tagline: 'Современные решения', image: '/products/washdown_rimless/9001.jpg', color: '#2c2c2c' },
         { id: 16, name: 'Washdown Rimless 9002', tagline: 'Высокое качество', image: '/products/washdown_rimless/9002.png', color: '#2c2c2c' },
         { id: 17, name: 'Pedestal Basin 6016', tagline: 'Классическая красота', image: '/products/pedestal_basin/Pedestal_Basin_6016.png', color: '#2c2c2c' },
-        { id: 18, name: 'Pedestal Basin 6229', tagline: 'Премиум качество и стиль', image: '/products/pedestal_basin/Pedestal_Basin_ 6229.jpg', color: '#2c2c2c' },
+        { id: 18, name: 'Pedestal Basin 6229', tagline: 'Премиум качество и стиль', image: '/products/pedestal_basin/Pedestal_Basin_6229.jpg', color: '#2c2c2c' },
         { id: 19, name: 'Pedestal Basin 6229 White', tagline: 'Белоснежная элегантность', image: '/products/pedestal_basin/Pedestal_Basin_6229.png', color: '#2c2c2c' }
       ],
       faucets: [
         { id: 1, name: 'Pedestal Basin 6006', tagline: 'Элегантная пьедестальная раковина', image: '/products/pedestal_basin/Pedestal_Basin_6006.png', color: '#2c2c2c' },
         { id: 2, name: 'Pedestal Basin 6007', tagline: 'Современный дизайн и функциональность', image: '/products/pedestal_basin/Pedestal_Basin_6007.png', color: '#2c2c2c' },
         { id: 17, name: 'Pedestal Basin 6016', tagline: 'Классическая красота', image: '/products/pedestal_basin/Pedestal_Basin_6016.png', color: '#2c2c2c' },
-        { id: 18, name: 'Pedestal Basin 6229', tagline: 'Премиум качество и стиль', image: '/products/pedestal_basin/Pedestal_Basin_ 6229.jpg', color: '#2c2c2c' },
+        { id: 18, name: 'Pedestal Basin 6229', tagline: 'Премиум качество и стиль', image: '/products/pedestal_basin/Pedestal_Basin_6229.jpg', color: '#2c2c2c' },
         { id: 19, name: 'Pedestal Basin 6229 White', tagline: 'Белоснежная элегантность', image: '/products/pedestal_basin/Pedestal_Basin_6229.png', color: '#2c2c2c' }
       ],
       toilets: [
@@ -90,14 +90,14 @@ export const productsTranslations = {
         { id: 15, name: 'Washdown Rimless 9001', tagline: 'Modern çözümler', image: '/products/washdown_rimless/9001.jpg', color: '#2c2c2c' },
         { id: 16, name: 'Washdown Rimless 9002', tagline: 'Yüksek kalite', image: '/products/washdown_rimless/9002.png', color: '#2c2c2c' },
         { id: 17, name: 'Pedestal Basin 6016', tagline: 'Klasik güzellik', image: '/products/pedestal_basin/Pedestal_Basin_6016.png', color: '#2c2c2c' },
-        { id: 18, name: 'Pedestal Basin 6229', tagline: 'Premium kalite ve stil', image: '/products/pedestal_basin/Pedestal_Basin_ 6229.jpg', color: '#2c2c2c' },
+        { id: 18, name: 'Pedestal Basin 6229', tagline: 'Premium kalite ve stil', image: '/products/pedestal_basin/Pedestal_Basin_6229.jpg', color: '#2c2c2c' },
         { id: 19, name: 'Pedestal Basin 6229 White', tagline: 'Beyaz zarafet', image: '/products/pedestal_basin/Pedestal_Basin_6229.png', color: '#2c2c2c' }
       ],
       faucets: [
         { id: 1, name: 'Pedestal Basin 6006', tagline: 'Zarif podyumlu lavabo', image: '/products/pedestal_basin/Pedestal_Basin_6006.png', color: '#2c2c2c' },
         { id: 2, name: 'Pedestal Basin 6007', tagline: 'Modern tasarım ve işlevsellik', image: '/products/pedestal_basin/Pedestal_Basin_6007.png', color: '#2c2c2c' },
         { id: 17, name: 'Pedestal Basin 6016', tagline: 'Klasik güzellik', image: '/products/pedestal_basin/Pedestal_Basin_6016.png', color: '#2c2c2c' },
-        { id: 18, name: 'Pedestal Basin 6229', tagline: 'Premium kalite ve stil', image: '/products/pedestal_basin/Pedestal_Basin_ 6229.jpg', color: '#2c2c2c' },
+        { id: 18, name: 'Pedestal Basin 6229', tagline: 'Premium kalite ve stil', image: '/products/pedestal_basin/Pedestal_Basin_6229.jpg', color: '#2c2c2c' },
         { id: 19, name: 'Pedestal Basin 6229 White', tagline: 'Beyaz zarafet', image: '/products/pedestal_basin/Pedestal_Basin_6229.png', color: '#2c2c2c' }
       ],
       toilets: [
@@ -151,14 +151,14 @@ export const productsTranslations = {
         { id: 15, name: 'Washdown Rimless 9001', tagline: 'Modern solutions', image: '/products/washdown_rimless/9001.jpg', color: '#2c2c2c' },
         { id: 16, name: 'Washdown Rimless 9002', tagline: 'High quality', image: '/products/washdown_rimless/9002.png', color: '#2c2c2c' },
         { id: 17, name: 'Pedestal Basin 6016', tagline: 'Classic beauty', image: '/products/pedestal_basin/Pedestal_Basin_6016.png', color: '#2c2c2c' },
-        { id: 18, name: 'Pedestal Basin 6229', tagline: 'Premium quality and style', image: '/products/pedestal_basin/Pedestal_Basin_ 6229.jpg', color: '#2c2c2c' },
+        { id: 18, name: 'Pedestal Basin 6229', tagline: 'Premium quality and style', image: '/products/pedestal_basin/Pedestal_Basin_6229.jpg', color: '#2c2c2c' },
         { id: 19, name: 'Pedestal Basin 6229 White', tagline: 'Snow white elegance', image: '/products/pedestal_basin/Pedestal_Basin_6229.png', color: '#2c2c2c' }
       ],
       faucets: [
         { id: 1, name: 'Pedestal Basin 6006', tagline: 'Elegant pedestal basin', image: '/products/pedestal_basin/Pedestal_Basin_6006.png', color: '#2c2c2c' },
         { id: 2, name: 'Pedestal Basin 6007', tagline: 'Modern design and functionality', image: '/products/pedestal_basin/Pedestal_Basin_6007.png', color: '#2c2c2c' },
         { id: 17, name: 'Pedestal Basin 6016', tagline: 'Classic beauty', image: '/products/pedestal_basin/Pedestal_Basin_6016.png', color: '#2c2c2c' },
-        { id: 18, name: 'Pedestal Basin 6229', tagline: 'Premium quality and style', image: '/products/pedestal_basin/Pedestal_Basin_ 6229.jpg', color: '#2c2c2c' },
+        { id: 18, name: 'Pedestal Basin 6229', tagline: 'Premium quality and style', image: '/products/pedestal_basin/Pedestal_Basin_6229.jpg', color: '#2c2c2c' },
         { id: 19, name: 'Pedestal Basin 6229 White', tagline: 'Snow white elegance', image: '/products/pedestal_basin/Pedestal_Basin_6229.png', color: '#2c2c2c' }
       ],
       toilets: [

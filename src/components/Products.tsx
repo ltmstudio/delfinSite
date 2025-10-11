@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { smoothScroll, createScrollWatcher } from '@/utils/scroll';
 import { useLocalizedContent } from '@/hooks/useLocalizedContent';
 
@@ -85,11 +86,13 @@ const Products = () => {
                           className="products__card-bg"
                           style={{ backgroundColor: '#2c2c2c' }}
                         >
-                          <div className="products__image-container">
-                            <img 
+                          <div className="products__image-container" style={{ position: 'relative' }}>
+                            <Image 
                               src={product.image} 
                               alt={product.name}
+                              fill
                               className="products__image"
+                              style={{ objectFit: 'contain' }}
                             />
                           </div>
                           <div className="products__info">

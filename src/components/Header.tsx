@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useLocalizedContent } from '@/hooks/useLocalizedContent';
 import LanguageSwitcher from './LanguageSwitcher';
 import { initNavbarTheme } from '@/utils/navbarTheme';
@@ -35,11 +36,13 @@ const Header = () => {
         {/* Логотип */}
         <div className="navbar-brand d-flex align-items-center">
           <div className="logo-container">
-            <img 
+            <Image 
               src="/logo-delfin.png" 
               alt="Del'fin Logo" 
               className="dolphin-logo"
-              height="80"
+              width={80}
+              height={80}
+              priority
             />
           </div>
         </div>
@@ -90,11 +93,12 @@ const Header = () => {
         <div className="mobile-menu__content">
           <div className="mobile-menu__header">
             <div className="logo-container">
-              <img 
+              <Image 
                 src="/logo-delfin.png" 
                 alt="Del'fin Logo" 
                 className="dolphin-logo"
-                height="32"
+                width={32}
+                height={32}
               />
             </div>
             <button 

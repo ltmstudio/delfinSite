@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
+    "build:standalone": "next build --turbopack && node copy-public-files.js",
     "start": "next start"
   },
   "dependencies": {
