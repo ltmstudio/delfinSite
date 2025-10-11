@@ -5,7 +5,7 @@ export default createMiddleware({
   locales: ['ru', 'tr', 'en'],
 
   // Локаль по умолчанию
-  defaultLocale: 'ru',
+  defaultLocale: 'tr',
 
   // Автоматическое определение локали
   localeDetection: true
@@ -18,6 +18,6 @@ export const config = {
     // - API routes (api/*)
     // - статических файлов (_next/static/*) 
     // - файлы изображений (*.ico, *.png, etc.)
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next|api|.*\\..*|favicon.ico|robots.txt|sitemap.xml|manifest.json).*)',
   ]
 };
