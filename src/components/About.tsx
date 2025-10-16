@@ -92,13 +92,11 @@ const About = () => {
 
             {/* Аккордеон справа */}
             <div className="col-lg-6">
-              <div className="about__accordion d-flex flex-column gap-3">
+              <div className="about__accordion d-flex flex-column gap-3 animate-on-scroll" data-animation="animate-fade-in-right">
                 {accordionItems.map((item, index) => (
                   <div
                     key={item.id}
-                    className={`about__accordion-item animate-on-scroll ${activeAccordion === item.id ? 'active' : ''}`}
-                    data-animation="animate-fade-in-right"
-                    style={{ animationDelay: `${index * 0.2}s` }}
+                    className={`about__accordion-item ${activeAccordion === item.id ? 'active' : ''}`}
                     onClick={() => setActiveAccordion(item.id)}
                   >
                     <div className="about__accordion-header d-flex align-items-center">

@@ -427,6 +427,10 @@ textarea,
   body {
     overflow-x: hidden;
     width: 100%;
+    
+  }
+  .page {
+    overflow-x: hidden;
   }
   
   .container,

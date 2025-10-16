@@ -131,6 +131,19 @@ const categoriesTranslations: Record<Locale, any> = {
   }
 };
 
+// Переводы для Partners компонента
+const partnersTranslations: Record<Locale, any> = {
+  ru: {
+    title: "Изучите наших клиентов и партнеров"
+  },
+  tr: {
+    title: "Müşterilerimizi ve ortaklarımızı keşfedin"
+  },
+  en: {
+    title: "Explore our clients and partners"
+  }
+};
+
 // Переводы для About компонента
 const aboutTranslations: Record<Locale, any> = {
   ru: {
@@ -278,6 +291,7 @@ export function useLocalizedContent() {
     header: headerTranslations[locale],
     categories: categoriesTranslations[locale],
     about: aboutTranslations[locale],
+    partners: partnersTranslations[locale],
     products: productsTranslations[locale],
     footer: footerTranslations[locale],
   }), [locale]);
@@ -289,6 +303,7 @@ export function useLocalizedContent() {
     header: translations.header,
     categories: translations.categories,
     about: translations.about,
+    partners: translations.partners,
     products: translations.products,
     footer: translations.footer,
   };

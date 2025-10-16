@@ -2,12 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { createAutoSlider, createInfiniteSlides, chunkItems } from '@/utils/slider';
+import { useLocalizedContent } from '@/hooks/useLocalizedContent';
 
 const Partners = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const { partners: partnersContent } = useLocalizedContent();
 
-  const partners = [
+  const partnersList = [
     { name: "Logo Ipsum", logo: "/logo_logo.png" },
     { name: "LOGO IPSUM", logo: "/logo_logo.png" },
     { name: "Abstract", logo: "/logo_logo.png" },
@@ -26,10 +28,10 @@ const Partners = () => {
   ];
 
   const slidesPerView = 8;
-  const totalSlides = Math.ceil(partners.length / slidesPerView);
+  const totalSlides = Math.ceil(partnersList.length / slidesPerView);
 
   // Создаем дублированные слайды для цикличности
-  const duplicatedPartners = createInfiniteSlides(partners, slidesPerView);
+  const duplicatedPartners = createInfiniteSlides(partnersList, slidesPerView);
   const totalDuplicatedSlides = Math.ceil(duplicatedPartners.length / slidesPerView);
 
   // Автоматическая смена слайдов с цикличностью
@@ -64,7 +66,7 @@ const Partners = () => {
           <div className="row mb-5">
             <div className="col-12">
               <h2 className="partners__title text-center">
-                Изучите наших клиентов и партнеров
+                {partnersContent.title}
               </h2>
             </div>
           </div>
