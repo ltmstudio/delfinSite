@@ -1,0 +1,102 @@
+/* Премиальные стили для админки */
+.admin-page {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+/* Принудительно включаем обычный курсор */
+.admin-page,
+.admin-page *,
+.admin-page *::before,
+.admin-page *::after {
+  cursor: auto !important;
+}
+
+/* Курсор для интерактивных элементов */
+.admin-page button,
+.admin-page a,
+.admin-page [role="button"],
+.admin-page .btn,
+.admin-page input[type="submit"],
+.admin-page input[type="button"] {
+  cursor: pointer !important;
+}
+
+/* Курсор для полей ввода */
+.admin-page input[type="text"],
+.admin-page input[type="email"],
+.admin-page input[type="password"],
+.admin-page input[type="number"],
+.admin-page input[type="tel"],
+.admin-page input[type="url"],
+.admin-page input[type="search"],
+.admin-page textarea,
+.admin-page select {
+  cursor: text !important;
+}
+
+/* Курсор для ссылок */
+.admin-page a {
+  cursor: pointer !important;
+}
+
+/* Курсор для кнопок */
+.admin-page button {
+  cursor: pointer !important;
+}
+
+/* Убираем кастомный курсор для админки */
+.admin-page .custom-cursor-dot,
+.admin-page .custom-cursor-outline {
+  display: none !important;
+}
+
+/* Принудительно отключаем кастомный курсор */
+.admin-page {
+  cursor: auto !important;
+}
+
+/* Специально для страницы логина */
+.admin-page .min-h-screen {
+  cursor: auto !important;
+}
+
+.admin-page .min-h-screen * {
+  cursor: auto !important;
+}
+
+.admin-page .min-h-screen input {
+  cursor: text !important;
+}
+
+.admin-page .min-h-screen button {
+  cursor: pointer !important;
+}
+
+/* Принудительно отключаем кастомный курсор на всех элементах */
+.admin-page * {
+  cursor: auto !important;
+}
+
+.admin-page input,
+.admin-page textarea {
+  cursor: text !important;
+}
+
+.admin-page button,
+.admin-page a,
+.admin-page [role="button"] {
+  cursor: pointer !important;
+}
+
+/* Дополнительная защита от кастомного курсора */
+body.admin-page,
+html.admin-page {
+  cursor: auto !important;
+}
+
+body.admin-page *,
+html.admin-page * {
+  cursor: auto !important;
+}
