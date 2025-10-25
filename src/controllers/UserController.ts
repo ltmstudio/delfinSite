@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/database';
+import { pool } from '@/lib/mysql';
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 
@@ -14,56 +14,13 @@ export class UserController {
    */
   static async index(request: NextRequest) {
     try {
-      const { searchParams } = new URL(request.url);
-      const search = searchParams.get('search');
-      const page = parseInt(searchParams.get('page') || '1');
-      const limit = parseInt(searchParams.get('limit') || '10');
-      const skip = (page - 1) * limit;
-
-      const where: any = {};
-      
-      if (search) {
-        where.OR = [
-          { name: { contains: search } },
-          { email: { contains: search } }
-        ];
-      }
-
-      const [users, total] = await Promise.all([
-        prisma.user.findMany({
-          where,
-          skip,
-          take: limit,
-          orderBy: { createdAt: 'desc' },
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            role: true,
-            isActive: true,
-            createdAt: true,
-            updatedAt: true
-          }
-        }),
-        prisma.user.count({ where })
-      ]);
-
-      return NextResponse.json({
-        success: true,
-        data: users,
-        pagination: {
-          page,
-          limit,
-          total,
-          pages: Math.ceil(total / limit)
-        }
-      });
-    } catch (error) {
-      console.error('Ошибка получения пользователей:', error);
-      return NextResponse.json(
-        { success: false, error: 'Ошибка получения пользователей' },
-        { status: 500 }
+      const [users] = await pool.execute(
+        'SELECT id, name, email, role, isActive, createdAt, updatedAt FROM users ORDER BY createdAt DESC'
       );
+      return NextResponse.json({ success: true, data: users });
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      return NextResponse.json({ success: false, error: 'Failed to fetch users' }, { status: 500 });
     }
   }
 
@@ -73,36 +30,19 @@ export class UserController {
    */
   static async show(id: string) {
     try {
-      const user = await prisma.user.findUnique({
-        where: { id: parseInt(id) },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          role: true,
-          isActive: true,
-          createdAt: true,
-          updatedAt: true
-        }
-      });
-
-      if (!user) {
-        return NextResponse.json(
-          { success: false, error: 'Пользователь не найден' },
-          { status: 404 }
-        );
-      }
-
-      return NextResponse.json({
-        success: true,
-        data: user
-      });
-    } catch (error) {
-      console.error('Ошибка получения пользователя:', error);
-      return NextResponse.json(
-        { success: false, error: 'Ошибка получения пользователя' },
-        { status: 500 }
+      const [users] = await pool.execute(
+        'SELECT id, name, email, role, isActive, createdAt, updatedAt FROM users WHERE id = ?',
+        [parseInt(id)]
       );
+      
+      const user = (users as any[])[0];
+      if (!user) {
+        return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
+      }
+      return NextResponse.json({ success: true, data: user });
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      return NextResponse.json({ success: false, error: 'Failed to fetch user' }, { status: 500 });
     }
   }
 
@@ -113,60 +53,29 @@ export class UserController {
   static async store(request: NextRequest) {
     try {
       const body = await request.json();
-      const { name, email, password, role = 'admin' } = body;
+      const { name, email, password, role, isActive } = body;
 
-      // Валидация
-      if (!name || !email || !password) {
-        return NextResponse.json(
-          { success: false, error: 'Имя, email и пароль обязательны' },
-          { status: 400 }
-        );
+      if (!email || !password) {
+        return NextResponse.json({ success: false, error: 'Email and password are required' }, { status: 400 });
       }
 
-      // Проверяем, существует ли пользователь с таким email
-      const existingUser = await prisma.user.findUnique({
-        where: { email }
-      });
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-      if (existingUser) {
-        return NextResponse.json(
-          { success: false, error: 'Пользователь с таким email уже существует' },
-          { status: 400 }
-        );
-      }
-
-      // Хешируем пароль
-      const hashedPassword = await bcrypt.hash(password, 12);
-
-      const user = await prisma.user.create({
-        data: {
-          name,
-          email,
-          password: hashedPassword,
-          role
-        },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          role: true,
-          isActive: true,
-          createdAt: true,
-          updatedAt: true
-        }
-      });
-
-      return NextResponse.json({
-        success: true,
-        data: user,
-        message: 'Пользователь создан успешно'
-      });
-    } catch (error) {
-      console.error('Ошибка создания пользователя:', error);
-      return NextResponse.json(
-        { success: false, error: 'Ошибка создания пользователя' },
-        { status: 500 }
+      const [result] = await pool.execute(
+        'INSERT INTO users (name, email, password, role, isActive, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, NOW(), NOW())',
+        [name, email, hashedPassword, role || 'user', isActive !== undefined ? isActive : true]
       );
+
+      const insertId = (result as any).insertId;
+      const [users] = await pool.execute(
+        'SELECT id, name, email, role, isActive, createdAt, updatedAt FROM users WHERE id = ?',
+        [insertId]
+      );
+
+      return NextResponse.json({ success: true, data: (users as any[])[0], message: 'User created successfully' }, { status: 201 });
+    } catch (error) {
+      console.error('Error creating user:', error);
+      return NextResponse.json({ success: false, error: 'Failed to create user' }, { status: 500 });
     }
   }
 
@@ -179,43 +88,48 @@ export class UserController {
       const body = await request.json();
       const { name, email, password, role, isActive } = body;
 
-      const updateData: any = {
-        name,
-        email,
-        role,
-        isActive: isActive !== undefined ? isActive : true
-      };
+      let updateFields = [];
+      let params = [];
 
-      // Если передан новый пароль, хешируем его
+      if (name !== undefined) {
+        updateFields.push('name = ?');
+        params.push(name);
+      }
+      if (email !== undefined) {
+        updateFields.push('email = ?');
+        params.push(email);
+      }
       if (password) {
-        updateData.password = await bcrypt.hash(password, 12);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        updateFields.push('password = ?');
+        params.push(hashedPassword);
+      }
+      if (role !== undefined) {
+        updateFields.push('role = ?');
+        params.push(role);
+      }
+      if (isActive !== undefined) {
+        updateFields.push('isActive = ?');
+        params.push(isActive);
       }
 
-      const user = await prisma.user.update({
-        where: { id: parseInt(id) },
-        data: updateData,
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          role: true,
-          isActive: true,
-          createdAt: true,
-          updatedAt: true
-        }
-      });
+      updateFields.push('updatedAt = NOW()');
+      params.push(parseInt(id));
 
-      return NextResponse.json({
-        success: true,
-        data: user,
-        message: 'Пользователь обновлен успешно'
-      });
-    } catch (error) {
-      console.error('Ошибка обновления пользователя:', error);
-      return NextResponse.json(
-        { success: false, error: 'Ошибка обновления пользователя' },
-        { status: 500 }
+      await pool.execute(
+        `UPDATE users SET ${updateFields.join(', ')} WHERE id = ?`,
+        params
       );
+
+      const [users] = await pool.execute(
+        'SELECT id, name, email, role, isActive, createdAt, updatedAt FROM users WHERE id = ?',
+        [parseInt(id)]
+      );
+
+      return NextResponse.json({ success: true, data: (users as any[])[0], message: 'User updated successfully' });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      return NextResponse.json({ success: false, error: 'Failed to update user' }, { status: 500 });
     }
   }
 
@@ -225,23 +139,11 @@ export class UserController {
    */
   static async destroy(id: string) {
     try {
-      // Проверяем, не пытается ли пользователь удалить самого себя
-      // (это можно добавить позже через middleware)
-      
-      await prisma.user.delete({
-        where: { id: parseInt(id) }
-      });
-
-      return NextResponse.json({
-        success: true,
-        message: 'Пользователь удален успешно'
-      });
+      await pool.execute('DELETE FROM users WHERE id = ?', [parseInt(id)]);
+      return NextResponse.json({ success: true, message: 'User deleted successfully' });
     } catch (error) {
-      console.error('Ошибка удаления пользователя:', error);
-      return NextResponse.json(
-        { success: false, error: 'Ошибка удаления пользователя' },
-        { status: 500 }
-      );
+      console.error('Error deleting user:', error);
+      return NextResponse.json({ success: false, error: 'Failed to delete user' }, { status: 500 });
     }
   }
 }

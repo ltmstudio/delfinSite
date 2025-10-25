@@ -40,35 +40,35 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="admin-page d-flex align-items-center justify-content-center" style={{minHeight: '100vh', padding: '3rem 1rem'}}>
       {/* Анимированные декоративные элементы */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-500/30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-pink-500/30 rounded-full blur-3xl animate-pulse delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500/20 rounded-full blur-2xl animate-pulse delay-500"></div>
+      <div style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}}>
+        <div style={{position: 'absolute', top: '5rem', left: '5rem', width: '18rem', height: '18rem', backgroundColor: 'rgba(59, 130, 246, 0.3)', borderRadius: '50%', filter: 'blur(3rem)', animation: 'pulse 2s infinite'}}></div>
+        <div style={{position: 'absolute', top: '10rem', right: '5rem', width: '24rem', height: '24rem', backgroundColor: 'rgba(147, 51, 234, 0.3)', borderRadius: '50%', filter: 'blur(3rem)', animation: 'pulse 2s infinite 1s'}}></div>
+        <div style={{position: 'absolute', bottom: '5rem', left: '33%', width: '20rem', height: '20rem', backgroundColor: 'rgba(236, 72, 153, 0.3)', borderRadius: '50%', filter: 'blur(3rem)', animation: 'pulse 2s infinite 2s'}}></div>
+        <div style={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '16rem', height: '16rem', backgroundColor: 'rgba(6, 182, 212, 0.2)', borderRadius: '50%', filter: 'blur(2rem)', animation: 'pulse 2s infinite 0.5s'}}></div>
       </div>
       
-      <div className="relative z-10 w-full max-w-md">
+      <div style={{position: 'relative', zIndex: 10, width: '100%', maxWidth: '28rem'}}>
         {/* Логотип и заголовок */}
-        <div className="text-center mb-8">
-          <div className="mx-auto h-20 w-20 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-3xl flex items-center justify-center mb-6 shadow-2xl transform hover:scale-110 transition-transform duration-300">
-            <span className="text-3xl font-bold text-white">D</span>
+        <div className="text-center mb-5">
+          <div className="mx-auto mb-4" style={{width: '5rem', height: '5rem', background: 'linear-gradient(135deg, #06b6d4, #3b82f6, #8b5cf6)', borderRadius: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'}}>
+            <span className="text-white fw-bold" style={{fontSize: '1.875rem'}}>D</span>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-3 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+          <h1 className="text-white mb-3 fw-bold" style={{fontSize: '2.25rem', background: 'linear-gradient(135deg, #06b6d4, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
             Добро пожаловать
           </h1>
-          <p className="text-slate-300 text-lg">
+          <p className="text-white-50" style={{fontSize: '1.125rem'}}>
             Войдите в админ панель Del'fin
           </p>
         </div>
 
         {/* Форма входа */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-white/20">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-slate-200 mb-2">
+        <div style={{backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(16px)', borderRadius: '1rem', padding: '2rem', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', border: '1px solid rgba(255, 255, 255, 0.2)'}}>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label text-white-50">
                   Email адрес
                 </label>
                 <input
@@ -76,16 +76,16 @@ export default function AdminLogin() {
                   name="email"
                   type="email"
                   required
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  className="form-control"
+                  style={{backgroundColor: 'rgba(255, 255, 255, 0.1)', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '0.75rem', color: 'white', padding: '0.75rem 1rem'}}
                   placeholder="admin@delfin.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  style={{ cursor: 'text' }}
                 />
               </div>
               
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-slate-200 mb-2">
+              <div className="mb-4">
+                <label htmlFor="password" className="form-label text-white-50">
                   Пароль
                 </label>
                 <input
@@ -93,17 +93,17 @@ export default function AdminLogin() {
                   name="password"
                   type="password"
                   required
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  className="form-control"
+                  style={{backgroundColor: 'rgba(255, 255, 255, 0.1)', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '0.75rem', color: 'white', padding: '0.75rem 1rem'}}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  style={{ cursor: 'text' }}
                 />
               </div>
             </div>
 
             {error && (
-              <div className="bg-red-500/20 border border-red-500/30 text-red-200 px-4 py-3 rounded-xl text-sm">
+              <div className="alert alert-danger mb-3" style={{backgroundColor: 'rgba(239, 68, 68, 0.2)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#fecaca'}}>
                 {error}
               </div>
             )}
@@ -111,12 +111,20 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-              style={{ cursor: 'pointer' }}
+              className="btn w-100 text-white fw-semibold py-3 px-4 rounded-3"
+              style={{ 
+                background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', 
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+              }}
             >
               {loading ? (
-                <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                <div className="d-flex align-items-center justify-content-center">
+                  <div className="spinner-border spinner-border-sm me-2" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
                   Вход...
                 </div>
               ) : (

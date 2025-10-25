@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useToast } from '@/components/Toast';
 
 interface Category {
   id: number;
@@ -24,6 +25,7 @@ export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { showToast, ToastContainer } = useToast();
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -52,8 +54,6 @@ export default function CategoriesPage() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Вы уверены, что хотите удалить эту категорию?')) return;
-
     try {
       const response = await fetch(`/api/categories/${id}`, {
         method: 'DELETE'
@@ -61,44 +61,41 @@ export default function CategoriesPage() {
       
       if (response.ok) {
         setCategories(categories.filter(c => c.id !== id));
+        showToast('Категория удалена успешно', 'success');
       } else {
-        alert('Ошибка удаления категории');
+        const data = await response.json();
+        showToast(data.error || 'Ошибка удаления категории', 'error');
       }
     } catch (error) {
-      alert('Ошибка удаления категории');
+      showToast('Ошибка удаления категории', 'error');
     }
   };
-
-  if (status === 'loading' || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Загрузка...</div>
-      </div>
-    );
-  }
 
   if (!session) {
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div style={{minHeight: '100vh', backgroundColor: '#ffffff'}}>
       {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center">
-              <Link href="/admin" className="text-indigo-600 hover:text-indigo-500 mr-4">
+      <header style={{backgroundColor: '#ffffff', borderBottom: '1px solid #e5e5e5'}}>
+        <div className="container-fluid">
+          <div className="d-flex justify-content-between align-items-center py-3">
+            <div className="d-flex align-items-center">
+              <Link href="/admin" className="text-primary me-3" style={{textDecoration: 'none'}}>
                 ← Назад
               </Link>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="h4 fw-bold text-dark mb-0">
                 Управление категориями
               </h1>
             </div>
             <Link
               href="/admin/categories/create"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+              className="btn btn-primary"
             >
+              <svg style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
               Добавить категорию
             </Link>
           </div>
@@ -106,73 +103,117 @@ export default function CategoriesPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="container-fluid py-4">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+          <div className="alert alert-danger mb-4">
             {error}
           </div>
         )}
 
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
-          <ul className="divide-y divide-gray-200">
-            {categories.length === 0 ? (
-              <li className="px-6 py-4 text-center text-gray-500">
-                Категории не найдены
-              </li>
-            ) : (
-              categories.map((category) => (
-                <li key={category.id} className="px-6 py-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      {category.imageUrl && (
-                        <div className="flex-shrink-0 h-16 w-16">
+        <div className="card shadow-sm border-0" style={{borderRadius: '1rem'}}>
+          {categories.length === 0 ? (
+            <div className="card-body text-center py-5">
+              <div className="mx-auto mb-4" style={{width: '3rem', height: '3rem', backgroundColor: '#f1f5f9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                <svg style={{width: '1.5rem', height: '1.5rem', color: '#94a3b8'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+              </div>
+              <h3 className="h5 fw-medium text-dark mb-2">Категории не найдены</h3>
+              <p className="text-muted mb-4">Начните с добавления первой категории</p>
+              <Link
+                href="/admin/categories/create"
+                className="btn btn-primary"
+              >
+                Добавить категорию
+              </Link>
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="table table-hover">
+                <thead className="table-light">
+                  <tr>
+                    <th style={{width: '60px'}}>Фото</th>
+                    <th>Название</th>
+                    <th>Описание</th>
+                    <th>Товары</th>
+                    <th>Статус</th>
+                    <th>Создана</th>
+                    <th style={{width: '200px'}}>Действия</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {categories.map((category) => (
+                    <tr key={category.id}>
+                      <td>
+                        {category.imageUrl ? (
                           <img
-                            className="h-16 w-16 rounded-lg object-cover"
+                            className="rounded-3 shadow-sm"
                             src={category.imageUrl}
                             alt={category.name}
+                            style={{width: '3rem', height: '3rem', objectFit: 'cover'}}
                           />
-                        </div>
-                      )}
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
+                        ) : (
+                          <div className="d-flex align-items-center justify-content-center" style={{width: '3rem', height: '3rem', backgroundColor: '#f1f5f9', borderRadius: '0.75rem'}}>
+                            <svg style={{width: '1.5rem', height: '1.5rem', color: '#94a3b8'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                            </svg>
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <h6 className="fw-semibold text-dark mb-0">
                           {category.name}
+                        </h6>
+                      </td>
+                      <td>
+                        <p className="text-muted small mb-0" style={{display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'}}>
+                          {category.description || '—'}
+                        </p>
+                      </td>
+                      <td>
+                        <span className="badge bg-info">
+                          {category.productCount || 0} товаров
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`badge ${
+                          category.isActive 
+                            ? 'bg-success' 
+                            : 'bg-danger'
+                        }`}>
+                          {category.isActive ? 'Активна' : 'Неактивна'}
+                        </span>
+                      </td>
+                      <td>
+                        <small className="text-muted">
+                          {new Date(category.createdAt).toLocaleDateString()}
+                        </small>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-center gap-2">
+                          <Link
+                            href={`/admin/categories/${category.id}/edit`}
+                            className="btn btn-outline-primary btn-sm"
+                          >
+                            Редактировать
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(category.id)}
+                            className="btn btn-outline-danger btn-sm"
+                          >
+                            Удалить
+                          </button>
                         </div>
-                        <div className="text-sm text-gray-500">
-                          {category.description}
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          Создана: {new Date(category.createdAt).toLocaleDateString()}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        category.isActive 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {category.isActive ? 'Активна' : 'Неактивна'}
-                      </span>
-                      <Link
-                        href={`/admin/categories/${category.id}/edit`}
-                        className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
-                      >
-                        Редактировать
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(category.id)}
-                        className="text-red-600 hover:text-red-900 text-sm font-medium"
-                      >
-                        Удалить
-                      </button>
-                    </div>
-                  </div>
-                </li>
-              ))
-            )}
-          </ul>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </main>
+      <ToastContainer />
     </div>
   );
 }

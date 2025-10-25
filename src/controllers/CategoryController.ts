@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/database';
+import { pool } from '@/lib/mysql';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -19,24 +19,30 @@ export class CategoryController {
       const limit = parseInt(searchParams.get('limit') || '10');
       const skip = (page - 1) * limit;
 
-      const where: any = { isActive: true };
+      let whereClause = 'WHERE isActive = 1';
+      let params: any[] = [];
       
       if (search) {
-        where.OR = [
-          { name: { contains: search } },
-          { description: { contains: search } }
-        ];
+        whereClause += ' AND (name LIKE ? OR description LIKE ?)';
+        params.push(`%${search}%`, `%${search}%`);
       }
 
-      const [categories, total] = await Promise.all([
-        prisma.category.findMany({
-          where,
-          skip,
-          take: limit,
-          orderBy: { name: 'asc' }
-        }),
-        prisma.category.count({ where })
-      ]);
+      const [categories] = await pool.execute(
+        `SELECT c.*, COUNT(p.id) as productCount 
+         FROM categories c 
+         LEFT JOIN products p ON c.id = p.categoryId 
+         ${whereClause.replace('isActive', 'c.isActive')} 
+         GROUP BY c.id 
+         ORDER BY c.name ASC 
+         LIMIT ? OFFSET ?`,
+        [...params, limit, skip]
+      );
+
+      const [totalResult] = await pool.execute(
+        `SELECT COUNT(*) as total FROM categories ${whereClause}`,
+        params
+      );
+      const total = (totalResult as any[])[0].total;
 
       return NextResponse.json({
         success: true,
@@ -63,9 +69,12 @@ export class CategoryController {
    */
   static async show(id: string) {
     try {
-      const category = await prisma.category.findUnique({
-        where: { id: parseInt(id) }
-      });
+      const [categories] = await pool.execute(
+        'SELECT * FROM categories WHERE id = ?',
+        [parseInt(id)]
+      );
+
+      const category = (categories as any[])[0];
 
       if (!category) {
         return NextResponse.json(
@@ -165,9 +174,29 @@ export class CategoryController {
    */
   static async destroy(id: string) {
     try {
-      await prisma.category.delete({
-        where: { id: parseInt(id) }
-      });
+      const connection = await pool.getConnection();
+      
+      // Проверяем, есть ли товары в этой категории
+      const [products] = await connection.execute(
+        'SELECT COUNT(*) as count FROM products WHERE categoryId = ?',
+        [parseInt(id)]
+      );
+      
+      if (products[0].count > 0) {
+        connection.release();
+        return NextResponse.json(
+          { success: false, error: 'Нельзя удалить категорию, в которой есть товары' },
+          { status: 400 }
+        );
+      }
+      
+      // Удаляем категорию
+      await connection.execute(
+        'DELETE FROM categories WHERE id = ?',
+        [parseInt(id)]
+      );
+      
+      connection.release();
 
       return NextResponse.json({
         success: true,

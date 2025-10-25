@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useToast } from '@/components/Toast';
 
 interface Product {
   id: number;
@@ -26,6 +27,7 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { showToast, ToastContainer } = useToast();
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -54,8 +56,6 @@ export default function ProductsPage() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Вы уверены, что хотите удалить этот товар?')) return;
-
     try {
       const response = await fetch(`/api/products/${id}`, {
         method: 'DELETE'
@@ -63,165 +63,181 @@ export default function ProductsPage() {
       
       if (response.ok) {
         setProducts(products.filter(p => p.id !== id));
+        showToast('Товар удален успешно', 'success');
       } else {
-        alert('Ошибка удаления товара');
+        showToast('Ошибка удаления товара', 'error');
       }
     } catch (error) {
-      alert('Ошибка удаления товара');
+      showToast('Ошибка удаления товара', 'error');
     }
   };
-
-  if (status === 'loading' || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Загрузка...</div>
-      </div>
-    );
-  }
 
   if (!session) {
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div style={{minHeight: '100vh', backgroundColor: '#ffffff'}}>
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-lg border-b border-slate-200/50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-3">
-              <Link href="/admin" className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                <svg className="h-5 w-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <header style={{backgroundColor: '#ffffff', borderBottom: '1px solid #e5e5e5'}}>
+        <div className="container-fluid">
+          <div className="d-flex justify-content-between align-items-center py-3">
+            <div className="d-flex align-items-center">
+              <Link href="/admin" className="p-2 me-3 rounded-3" style={{transition: 'all 0.2s'}}>
+                <svg style={{width: '1.25rem', height: '1.25rem', color: '#64748b'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-slate-800">Товары</h1>
-                <p className="text-slate-500 text-sm">Управление каталогом товаров</p>
+                <h1 className="h4 fw-bold text-dark mb-0">Товары</h1>
+                <p className="text-muted small mb-0">Управление каталогом товаров</p>
               </div>
             </div>
             <Link
               href="/admin/products/create"
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
+              className="btn btn-primary"
             >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              <span>Добавить товар</span>
+              Добавить товар
             </Link>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="container-fluid py-4">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+          <div className="alert alert-danger mb-4">
             {error}
           </div>
         )}
 
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-200/50 overflow-hidden">
+        <div className="card shadow-sm border-0" style={{borderRadius: '1rem'}}>
           {products.length === 0 ? (
-            <div className="px-8 py-12 text-center">
-              <div className="mx-auto h-12 w-12 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                <svg className="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="card-body text-center py-5">
+              <div className="mx-auto mb-4" style={{width: '3rem', height: '3rem', backgroundColor: '#f1f5f9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                <svg style={{width: '1.5rem', height: '1.5rem', color: '#94a3b8'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-slate-900 mb-2">Товары не найдены</h3>
-              <p className="text-slate-500 mb-4">Начните с добавления первого товара</p>
+              <h3 className="h5 fw-medium text-dark mb-2">Товары не найдены</h3>
+              <p className="text-muted mb-4">Начните с добавления первого товара</p>
               <Link
                 href="/admin/products/create"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors duration-200"
+                className="btn btn-primary d-inline-flex align-items-center"
               >
-                <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
                 Добавить товар
               </Link>
             </div>
           ) : (
-            <div className="divide-y divide-slate-200">
-              {products.map((product) => (
-                <div key={product.id} className="p-6 hover:bg-slate-50 transition-colors duration-200">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      {product.imageUrl ? (
-                        <div className="flex-shrink-0 h-16 w-16">
+            <div className="table-responsive">
+              <table className="table table-hover">
+                <thead className="table-light">
+                  <tr>
+                    <th style={{width: '60px'}}>Фото</th>
+                    <th>Название</th>
+                    <th>Категория</th>
+                    <th>Цена</th>
+                    <th>Статус</th>
+                    <th>Создан</th>
+                    <th style={{width: '200px'}}>Действия</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {products.map((product) => (
+                    <tr key={product.id}>
+                      <td>
+                        {product.imageUrl ? (
                           <img
-                            className="h-16 w-16 rounded-xl object-cover shadow-md"
+                            className="rounded-3 shadow-sm"
                             src={product.imageUrl}
                             alt={product.name}
+                            style={{width: '3rem', height: '3rem', objectFit: 'cover'}}
                           />
-                        </div>
-                      ) : (
-                        <div className="flex-shrink-0 h-16 w-16 bg-slate-100 rounded-xl flex items-center justify-center">
-                          <svg className="h-8 w-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                        </div>
-                      )}
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-slate-900 mb-1">
-                          {product.name}
-                        </h3>
-                        {product.description && (
-                          <p className="text-slate-600 text-sm mb-2 line-clamp-2">
-                            {product.description}
-                          </p>
-                        )}
-                        <div className="flex items-center space-x-4 text-sm text-slate-500">
-                          <span className="flex items-center">
-                            <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                        ) : (
+                          <div className="d-flex align-items-center justify-content-center" style={{width: '3rem', height: '3rem', backgroundColor: '#f1f5f9', borderRadius: '0.75rem'}}>
+                            <svg style={{width: '1.5rem', height: '1.5rem', color: '#94a3b8'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            {product.category}
-                          </span>
-                          {product.price && (
-                            <span className="flex items-center">
-                              <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                              </svg>
-                              {product.price} руб.
-                            </span>
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <div>
+                          <h6 className="fw-semibold text-dark mb-1">
+                            {product.name}
+                          </h6>
+                          {product.description && (
+                            <p className="text-muted small mb-0" style={{display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'}}>
+                              {product.description}
+                            </p>
                           )}
                         </div>
-                        <div className="text-xs text-slate-400 mt-1">
-                          Создан: {new Date(product.createdAt).toLocaleDateString()}
+                      </td>
+                      <td>
+                        <span className="d-flex align-items-center">
+                          <svg style={{width: '1rem', height: '1rem', marginRight: '0.25rem', color: '#6c757d'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                          </svg>
+                          {product.category}
+                        </span>
+                      </td>
+                      <td>
+                        {product.price ? (
+                          <span className="d-flex align-items-center">
+                            <svg style={{width: '1rem', height: '1rem', marginRight: '0.25rem', color: '#6c757d'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                            </svg>
+                            {product.price} руб.
+                          </span>
+                        ) : (
+                          <span className="text-muted">—</span>
+                        )}
+                      </td>
+                      <td>
+                        <span className={`badge ${
+                          product.isActive 
+                            ? 'bg-success' 
+                            : 'bg-danger'
+                        }`}>
+                          {product.isActive ? 'Активен' : 'Неактивен'}
+                        </span>
+                      </td>
+                      <td>
+                        <small className="text-muted">
+                          {new Date(product.createdAt).toLocaleDateString()}
+                        </small>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-center gap-2">
+                          <Link
+                            href={`/admin/products/${product.id}/edit`}
+                            className="btn btn-outline-primary btn-sm"
+                          >
+                            Редактировать
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(product.id)}
+                            className="btn btn-outline-danger btn-sm"
+                          >
+                            Удалить
+                          </button>
                         </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                        product.isActive 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {product.isActive ? 'Активен' : 'Неактивен'}
-                      </span>
-                      <div className="flex items-center space-x-2">
-                        <Link
-                          href={`/admin/products/${product.id}/edit`}
-                          className="px-3 py-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg text-sm font-medium transition-colors duration-200"
-                        >
-                          Редактировать
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(product.id)}
-                          className="px-3 py-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg text-sm font-medium transition-colors duration-200"
-                        >
-                          Удалить
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
       </main>
+      <ToastContainer />
     </div>
   );
 }

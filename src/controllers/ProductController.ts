@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/database';
+import { pool } from '@/lib/mysql';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -14,39 +14,43 @@ export class ProductController {
   static async index(request: NextRequest) {
     try {
       const { searchParams } = new URL(request.url);
-      const category = searchParams.get('category');
       const search = searchParams.get('search');
+      const category = searchParams.get('category');
       const page = parseInt(searchParams.get('page') || '1');
       const limit = parseInt(searchParams.get('limit') || '10');
       const skip = (page - 1) * limit;
 
-      const where: any = { isActive: true };
-      
-      if (category) {
-        where.category = {
-          name: category
-        };
-      }
+      let whereClause = 'WHERE p.isActive = 1';
+      let params: any[] = [];
       
       if (search) {
-        where.OR = [
-          { name: { contains: search } },
-          { description: { contains: search } }
-        ];
+        whereClause += ' AND (p.name LIKE ? OR p.description LIKE ?)';
+        params.push(`%${search}%`, `%${search}%`);
       }
 
-      const [products, total] = await Promise.all([
-        prisma.product.findMany({
-          where,
-          skip,
-          take: limit,
-          orderBy: { createdAt: 'desc' },
-          include: {
-            category: true
-          }
-        }),
-        prisma.product.count({ where })
-      ]);
+      if (category) {
+        whereClause += ' AND c.name = ?';
+        params.push(category);
+      }
+
+      const [products] = await pool.execute(
+        `SELECT p.*, c.name as categoryName 
+         FROM products p 
+         LEFT JOIN categories c ON p.categoryId = c.id 
+         ${whereClause} 
+         ORDER BY p.createdAt DESC 
+         LIMIT ? OFFSET ?`,
+        [...params, limit, skip]
+      );
+
+      const [totalResult] = await pool.execute(
+        `SELECT COUNT(*) as total 
+         FROM products p 
+         LEFT JOIN categories c ON p.categoryId = c.id 
+         ${whereClause}`,
+        params
+      );
+      const total = (totalResult as any[])[0].total;
 
       return NextResponse.json({
         success: true,
@@ -73,12 +77,15 @@ export class ProductController {
    */
   static async show(id: string) {
     try {
-      const product = await prisma.product.findUnique({
-        where: { id: parseInt(id) },
-        include: {
-          category: true
-        }
-      });
+      const [products] = await pool.execute(
+        `SELECT p.*, c.name as categoryName 
+         FROM products p 
+         LEFT JOIN categories c ON p.categoryId = c.id 
+         WHERE p.id = ?`,
+        [parseInt(id)]
+      );
+
+      const product = (products as any[])[0];
 
       if (!product) {
         return NextResponse.json(
@@ -109,7 +116,6 @@ export class ProductController {
       const body = await request.json();
       const { name, description, categoryId, price, imageUrl } = body;
 
-      // Валидация
       if (!name || !categoryId) {
         return NextResponse.json(
           { success: false, error: 'Название и категория обязательны' },
@@ -117,22 +123,23 @@ export class ProductController {
         );
       }
 
-      const product = await prisma.product.create({
-        data: {
-          name,
-          description: description || null,
-          categoryId: parseInt(categoryId),
-          price: price ? parseFloat(price) : null,
-          imageUrl: imageUrl || null
-        },
-        include: {
-          category: true
-        }
-      });
+      const [result] = await pool.execute(
+        'INSERT INTO products (name, description, categoryId, price, imageUrl, isActive, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())',
+        [name, description || null, parseInt(categoryId), price ? parseFloat(price) : null, imageUrl || null, true]
+      );
+
+      const insertId = (result as any).insertId;
+      const [products] = await pool.execute(
+        `SELECT p.*, c.name as categoryName 
+         FROM products p 
+         LEFT JOIN categories c ON p.categoryId = c.id 
+         WHERE p.id = ?`,
+        [insertId]
+      );
 
       return NextResponse.json({
         success: true,
-        data: product,
+        data: (products as any[])[0],
         message: 'Товар создан успешно'
       });
     } catch (error) {
@@ -153,24 +160,53 @@ export class ProductController {
       const body = await request.json();
       const { name, description, categoryId, price, imageUrl, isActive } = body;
 
-      const product = await prisma.product.update({
-        where: { id: parseInt(id) },
-        data: {
-          name,
-          description: description || null,
-          categoryId: categoryId ? parseInt(categoryId) : undefined,
-          price: price ? parseFloat(price) : null,
-          imageUrl: imageUrl || null,
-          isActive: isActive !== undefined ? isActive : true
-        },
-        include: {
-          category: true
-        }
-      });
+      let updateFields = [];
+      let params = [];
+
+      if (name !== undefined) {
+        updateFields.push('name = ?');
+        params.push(name);
+      }
+      if (description !== undefined) {
+        updateFields.push('description = ?');
+        params.push(description);
+      }
+      if (categoryId !== undefined) {
+        updateFields.push('categoryId = ?');
+        params.push(parseInt(categoryId));
+      }
+      if (price !== undefined) {
+        updateFields.push('price = ?');
+        params.push(price ? parseFloat(price) : null);
+      }
+      if (imageUrl !== undefined) {
+        updateFields.push('imageUrl = ?');
+        params.push(imageUrl);
+      }
+      if (isActive !== undefined) {
+        updateFields.push('isActive = ?');
+        params.push(isActive);
+      }
+
+      updateFields.push('updatedAt = NOW()');
+      params.push(parseInt(id));
+
+      await pool.execute(
+        `UPDATE products SET ${updateFields.join(', ')} WHERE id = ?`,
+        params
+      );
+
+      const [products] = await pool.execute(
+        `SELECT p.*, c.name as categoryName 
+         FROM products p 
+         LEFT JOIN categories c ON p.categoryId = c.id 
+         WHERE p.id = ?`,
+        [parseInt(id)]
+      );
 
       return NextResponse.json({
         success: true,
-        data: product,
+        data: (products as any[])[0],
         message: 'Товар обновлен успешно'
       });
     } catch (error) {
@@ -188,10 +224,7 @@ export class ProductController {
    */
   static async destroy(id: string) {
     try {
-      await prisma.product.delete({
-        where: { id: parseInt(id) }
-      });
-
+      await pool.execute('DELETE FROM products WHERE id = ?', [parseInt(id)]);
       return NextResponse.json({
         success: true,
         message: 'Товар удален успешно'
