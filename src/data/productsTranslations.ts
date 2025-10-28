@@ -30,7 +30,11 @@ export const productsTranslations = {
         { id: 16, name: 'Washdown Rimless 9002', tagline: 'Высокое качество', image: '/products/washdown_rimless/9002.png', color: '#2c2c2c' },
         { id: 17, name: 'Pedestal Basin 6016', tagline: 'Классическая красота', image: '/products/pedestal_basin/Pedestal_Basin_6016.png', color: '#2c2c2c' },
         { id: 18, name: 'Pedestal Basin 6229', tagline: 'Премиум качество и стиль', image: '/products/pedestal_basin/Pedestal_Basin_6229.jpg', color: '#2c2c2c' },
-        { id: 19, name: 'Pedestal Basin 6229 White', tagline: 'Белоснежная элегантность', image: '/products/pedestal_basin/Pedestal_Basin_6229.png', color: '#2c2c2c' }
+        { id: 19, name: 'Pedestal Basin 6229 White', tagline: 'Белоснежная элегантность', image: '/products/pedestal_basin/Pedestal_Basin_6229.png', color: '#2c2c2c' },
+        { id: 6, name: 'Concealed Cistern 9800', tagline: 'Скрытый бачок премиум класса', image: '/products/concealed_cistern/Concealed_Cistern_9800.jpg', color: '#4a90e2' },
+        { id: 7, name: 'Concealed Cistern 9801', tagline: 'Современный дизайн и функциональность', image: '/products/concealed_cistern/Concealed_Cistern_9801.jpg', color: '#7ed321' },
+        { id: 8, name: 'Concealed Cistern 9802', tagline: 'Элегантность и надёжность', image: '/products/concealed_cistern/Concealed_Cistern_9802.jpg', color: '#f5a623' },
+        { id: 9, name: 'Concealed Cistern 9803', tagline: 'Инновационные технологии', image: '/products/concealed_cistern/Concealed_Cistern_9803.jpg', color: '#bd10e0' }
       ],
       faucets: [
         { id: 1, name: 'Pedestal Basin 6006', tagline: 'Элегантная пьедестальная раковина', image: '/products/pedestal_basin/Pedestal_Basin_6006.png', color: '#2c2c2c' },
@@ -91,7 +95,11 @@ export const productsTranslations = {
         { id: 16, name: 'Washdown Rimless 9002', tagline: 'Yüksek kalite', image: '/products/washdown_rimless/9002.png', color: '#2c2c2c' },
         { id: 17, name: 'Pedestal Basin 6016', tagline: 'Klasik güzellik', image: '/products/pedestal_basin/Pedestal_Basin_6016.png', color: '#2c2c2c' },
         { id: 18, name: 'Pedestal Basin 6229', tagline: 'Premium kalite ve stil', image: '/products/pedestal_basin/Pedestal_Basin_6229.jpg', color: '#2c2c2c' },
-        { id: 19, name: 'Pedestal Basin 6229 White', tagline: 'Beyaz zarafet', image: '/products/pedestal_basin/Pedestal_Basin_6229.png', color: '#2c2c2c' }
+        { id: 19, name: 'Pedestal Basin 6229 White', tagline: 'Beyaz zarafet', image: '/products/pedestal_basin/Pedestal_Basin_6229.png', color: '#2c2c2c' },
+        { id: 6, name: 'Concealed Cistern 9800', tagline: 'Premium sınıf gizli depo', image: '/products/concealed_cistern/Concealed_Cistern_9800.jpg', color: '#4a90e2' },
+        { id: 7, name: 'Concealed Cistern 9801', tagline: 'Modern tasarım ve işlevsellik', image: '/products/concealed_cistern/Concealed_Cistern_9801.jpg', color: '#7ed321' },
+        { id: 8, name: 'Concealed Cistern 9802', tagline: 'Zarafet ve güvenilirlik', image: '/products/concealed_cistern/Concealed_Cistern_9802.jpg', color: '#f5a623' },
+        { id: 9, name: 'Concealed Cistern 9803', tagline: 'İnovatif teknolojiler', image: '/products/concealed_cistern/Concealed_Cistern_9803.jpg', color: '#bd10e0' }
       ],
       faucets: [
         { id: 1, name: 'Pedestal Basin 6006', tagline: 'Zarif podyumlu lavabo', image: '/products/pedestal_basin/Pedestal_Basin_6006.png', color: '#2c2c2c' },
@@ -152,7 +160,11 @@ export const productsTranslations = {
         { id: 16, name: 'Washdown Rimless 9002', tagline: 'High quality', image: '/products/washdown_rimless/9002.png', color: '#2c2c2c' },
         { id: 17, name: 'Pedestal Basin 6016', tagline: 'Classic beauty', image: '/products/pedestal_basin/Pedestal_Basin_6016.png', color: '#2c2c2c' },
         { id: 18, name: 'Pedestal Basin 6229', tagline: 'Premium quality and style', image: '/products/pedestal_basin/Pedestal_Basin_6229.jpg', color: '#2c2c2c' },
-        { id: 19, name: 'Pedestal Basin 6229 White', tagline: 'Snow white elegance', image: '/products/pedestal_basin/Pedestal_Basin_6229.png', color: '#2c2c2c' }
+        { id: 19, name: 'Pedestal Basin 6229 White', tagline: 'Snow white elegance', image: '/products/pedestal_basin/Pedestal_Basin_6229.png', color: '#2c2c2c' },
+        { id: 6, name: 'Concealed Cistern 9800', tagline: 'Premium class concealed cistern', image: '/products/concealed_cistern/Concealed_Cistern_9800.jpg', color: '#4a90e2' },
+        { id: 7, name: 'Concealed Cistern 9801', tagline: 'Modern design and functionality', image: '/products/concealed_cistern/Concealed_Cistern_9801.jpg', color: '#7ed321' },
+        { id: 8, name: 'Concealed Cistern 9802', tagline: 'Elegance and reliability', image: '/products/concealed_cistern/Concealed_Cistern_9802.jpg', color: '#f5a623' },
+        { id: 9, name: 'Concealed Cistern 9803', tagline: 'Innovative technologies', image: '/products/concealed_cistern/Concealed_Cistern_9803.jpg', color: '#bd10e0' }
       ],
       faucets: [
         { id: 1, name: 'Pedestal Basin 6006', tagline: 'Elegant pedestal basin', image: '/products/pedestal_basin/Pedestal_Basin_6006.png', color: '#2c2c2c' },

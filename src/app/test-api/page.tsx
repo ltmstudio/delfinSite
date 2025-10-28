@@ -29,7 +29,7 @@ export default function TestApiPage() {
       setProducts(productsData.data || []);
       setCategories(categoriesData.data || []);
     } catch (error) {
-      console.error('Ошибка загрузки данных:', error);
+      
     } finally {
       setLoading(false);
     }

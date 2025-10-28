@@ -129,6 +129,7 @@ const About = () => {
                     fill
                     className="about__image-hover"
                     style={{ objectFit: 'cover' }}
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
 
@@ -140,6 +141,7 @@ const About = () => {
                     fill
                     className="about__image-hover about__image-hover--top"
                     style={{ objectFit: 'cover', objectPosition: 'top' }}
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
               </div>

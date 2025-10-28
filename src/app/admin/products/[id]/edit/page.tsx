@@ -68,7 +68,6 @@ export default function EditProductPage() {
         setCategories(data.data);
       }
     } catch (error) {
-      console.error('Ошибка загрузки категорий:', error);
     }
   };
 

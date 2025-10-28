@@ -97,16 +97,9 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
-      <head>
-        <StructuredData locale={locale} />
-      </head>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <NextIntlClientProvider messages={messages}>
-          <BootstrapClient />
-          {children}
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      <BootstrapClient />
+      {children}
+    </NextIntlClientProvider>
   );
 }

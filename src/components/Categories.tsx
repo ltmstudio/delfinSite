@@ -44,6 +44,7 @@ const Categories = () => {
                   className="category__bg-image"
                   style={{ objectFit: 'cover' }}
                   priority
+                  sizes="100vw"
                 />
                 <div className="category__placeholder">
                   <span>{categories.gestureControl}</span>
@@ -65,6 +66,7 @@ const Categories = () => {
                   fill
                   className="category__bg-image"
                   style={{ objectFit: 'cover' }}
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="category__placeholder">
                   <span>{categories.touchlessGestureControl}</span>
@@ -83,6 +85,7 @@ const Categories = () => {
                   fill
                   className="category__bg-image"
                   style={{ objectFit: 'cover' }}
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="category__placeholder">
                   <span>{categories.touchlessGestureControl}</span>

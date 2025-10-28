@@ -51,8 +51,8 @@ const Header = () => {
         {/* Десктопное меню */}
         <div className="navbar-nav mx-auto d-flex flex-row d-none d-lg-flex">
           <a className="nav-link me-4" href="#hero">{header.nav.delphin}</a>
-          <a className="nav-link me-4" href="#products">{header.nav.products}</a>
-          <a className="nav-link me-4" href="#about">{header.nav.about}</a>
+          <a className="nav-link me-4" href="#products">{header.nav.collection}</a>
+          <a className="nav-link me-4" href="#about">{header.nav.collection}</a>
           <a className="nav-link" href="#footer">{header.nav.contact}</a>
         </div>
 
@@ -118,10 +118,10 @@ const Header = () => {
               {header.nav.delphin}
             </a>
             <a className="mobile-menu__link" href="#products" onClick={closeMenu}>
-              {header.nav.products}
+              {header.nav.collection}
             </a>
             <a className="mobile-menu__link" href="#about" onClick={closeMenu}>
-              {header.nav.about}
+              {header.nav.collection}
             </a>
             <a className="mobile-menu__link" href="#footer" onClick={closeMenu}>
               {header.nav.contact}

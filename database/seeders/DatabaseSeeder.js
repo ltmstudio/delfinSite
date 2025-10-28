@@ -1,5 +1,6 @@
 const { seedCategories } = require('./CategorySeeder');
 const { seedProducts } = require('./ProductSeeder');
+const { seedUsers } = require('./UserSeeder');
 
 /**
  * Database Seeder
@@ -11,6 +12,8 @@ async function runAllSeeders() {
   
   try {
     // Запускаем seeders в правильном порядке
+    await seedUsers();
+    console.log('');
     await seedCategories();
     console.log('');
     await seedProducts();

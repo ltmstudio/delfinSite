@@ -19,27 +19,28 @@ export class CategoryController {
       const limit = parseInt(searchParams.get('limit') || '10');
       const skip = (page - 1) * limit;
 
-      let whereClause = 'WHERE isActive = 1';
+      let whereClause = '';
       let params: any[] = [];
       
       if (search) {
-        whereClause += ' AND (name LIKE ? OR description LIKE ?)';
-        params.push(`%${search}%`, `%${search}%`);
+        whereClause = 'WHERE (c.name_ru LIKE ? OR c.name_en LIKE ? OR c.name_tk LIKE ? OR c.description LIKE ?)';
+        params.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
       }
 
-      const [categories] = await pool.execute(
-        `SELECT c.*, COUNT(p.id) as productCount 
-         FROM categories c 
-         LEFT JOIN products p ON c.id = p.categoryId 
-         ${whereClause.replace('isActive', 'c.isActive')} 
-         GROUP BY c.id 
-         ORDER BY c.name ASC 
-         LIMIT ? OFFSET ?`,
-        [...params, limit, skip]
+      // Избегаем ONLY_FULL_GROUP_BY: считаем товары подзапросом вместо GROUP BY
+      const [categories] = await pool.query(
+        `SELECT 
+           c.*, 
+           (SELECT COUNT(*) FROM products p WHERE p.categoryId = c.id) AS productCount
+         FROM categories c
+         ${whereClause}
+         ORDER BY c.name_ru ASC 
+         LIMIT ${Number(limit)} OFFSET ${Number(skip)}`,
+        params
       );
 
       const [totalResult] = await pool.execute(
-        `SELECT COUNT(*) as total FROM categories ${whereClause}`,
+        `SELECT COUNT(*) as total FROM categories c ${whereClause}`,
         params
       );
       const total = (totalResult as any[])[0].total;
@@ -55,7 +56,6 @@ export class CategoryController {
         }
       });
     } catch (error) {
-      console.error('Ошибка получения категорий:', error);
       return NextResponse.json(
         { success: false, error: 'Ошибка получения категорий' },
         { status: 500 }
@@ -88,7 +88,6 @@ export class CategoryController {
         data: category
       });
     } catch (error) {
-      console.error('Ошибка получения категории:', error);
       return NextResponse.json(
         { success: false, error: 'Ошибка получения категории' },
         { status: 500 }
@@ -103,33 +102,36 @@ export class CategoryController {
   static async store(request: NextRequest) {
     try {
       const body = await request.json();
-      const { name, description, imageUrl } = body;
+      const { name_ru, name_en, name_tk, description, imageUrl } = body;
 
       // Валидация
-      if (!name) {
+      if (!name_ru || !name_en || !name_tk) {
         return NextResponse.json(
-          { success: false, error: 'Название категории обязательно' },
+          { success: false, error: 'Названия категории на всех языках обязательны' },
           { status: 400 }
         );
       }
 
-      const category = await prisma.category.create({
-        data: {
-          name,
-          description: description || null,
-          imageUrl: imageUrl || null
-        }
-      });
+      const [result] = await pool.execute(
+        'INSERT INTO categories (name_ru, name_en, name_tk, description, imageUrl, isActive, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())',
+        [name_ru, name_en, name_tk, description || null, imageUrl || null, true]
+      );
+
+      const [categories] = await pool.execute(
+        'SELECT * FROM categories WHERE id = ?',
+        [(result as any).insertId]
+      );
+
+      const category = (categories as any[])[0];
 
       return NextResponse.json({
         success: true,
         data: category,
         message: 'Категория создана успешно'
       });
-    } catch (error) {
-      console.error('Ошибка создания категории:', error);
+    } catch (error: any) {
       return NextResponse.json(
-        { success: false, error: 'Ошибка создания категории' },
+        { success: false, error: 'Ошибка создания категории', details: error.message },
         { status: 500 }
       );
     }
@@ -142,27 +144,59 @@ export class CategoryController {
   static async update(id: string, request: NextRequest) {
     try {
       const body = await request.json();
-      const { name, description, imageUrl, isActive } = body;
+      const { name_ru, name_en, name_tk, description, imageUrl, isActive } = body;
 
-      const category = await prisma.category.update({
-        where: { id: parseInt(id) },
-        data: {
-          name,
-          description: description || null,
-          imageUrl: imageUrl || null,
-          isActive: isActive !== undefined ? isActive : true
-        }
-      });
+      let updateFields = [];
+      let params = [];
+
+      if (name_ru !== undefined) {
+        updateFields.push('name_ru = ?');
+        params.push(name_ru);
+      }
+      if (name_en !== undefined) {
+        updateFields.push('name_en = ?');
+        params.push(name_en);
+      }
+      if (name_tk !== undefined) {
+        updateFields.push('name_tk = ?');
+        params.push(name_tk);
+      }
+      if (description !== undefined) {
+        updateFields.push('description = ?');
+        params.push(description || null);
+      }
+      if (imageUrl !== undefined) {
+        updateFields.push('imageUrl = ?');
+        params.push(imageUrl || null);
+      }
+      if (isActive !== undefined) {
+        updateFields.push('isActive = ?');
+        params.push(isActive ? 1 : 0);
+      }
+
+      updateFields.push('updatedAt = NOW()');
+      params.push(parseInt(id));
+
+      await pool.execute(
+        `UPDATE categories SET ${updateFields.join(', ')} WHERE id = ?`,
+        params
+      );
+
+      const [categories] = await pool.execute(
+        'SELECT * FROM categories WHERE id = ?',
+        [parseInt(id)]
+      );
+
+      const category = (categories as any[])[0];
 
       return NextResponse.json({
         success: true,
         data: category,
         message: 'Категория обновлена успешно'
       });
-    } catch (error) {
-      console.error('Ошибка обновления категории:', error);
+    } catch (error: any) {
       return NextResponse.json(
-        { success: false, error: 'Ошибка обновления категории' },
+        { success: false, error: 'Ошибка обновления категории', details: error.message },
         { status: 500 }
       );
     }
@@ -182,7 +216,7 @@ export class CategoryController {
         [parseInt(id)]
       );
       
-      if (products[0].count > 0) {
+      if ((products as any[])[0].count > 0) {
         connection.release();
         return NextResponse.json(
           { success: false, error: 'Нельзя удалить категорию, в которой есть товары' },
@@ -203,7 +237,6 @@ export class CategoryController {
         message: 'Категория удалена успешно'
       });
     } catch (error) {
-      console.error('Ошибка удаления категории:', error);
       return NextResponse.json(
         { success: false, error: 'Ошибка удаления категории' },
         { status: 500 }

@@ -7,9 +7,10 @@ import { UserController } from '@/controllers/UserController';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  return UserController.show(params.id);
+  const { id } = await params;
+  return UserController.show(id);
 }
 
 /**
@@ -18,9 +19,10 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  return UserController.update(params.id, request);
+  const { id } = await params;
+  return UserController.update(id, request);
 }
 
 /**
@@ -29,7 +31,8 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  return UserController.destroy(params.id);
+  const { id } = await params;
+  return UserController.destroy(request, id);
 }

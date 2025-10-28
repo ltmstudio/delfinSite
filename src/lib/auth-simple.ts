@@ -12,10 +12,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
-        console.log('🔍 NextAuth: Попытка аутентификации', { email: credentials?.email });
-
         if (!credentials?.email || !credentials?.password) {
-          console.log('❌ NextAuth: Отсутствуют учетные данные');
           return null;
         }
 
@@ -29,14 +26,7 @@ export const authOptions: NextAuthOptions = {
           const users = rows as any[];
           const user = users[0];
 
-          console.log('👤 NextAuth: Пользователь найден', {
-            found: !!user,
-            isActive: user?.isActive,
-            email: user?.email
-          });
-
           if (!user) {
-            console.log('❌ NextAuth: Пользователь не найден');
             return null;
           }
 
@@ -45,14 +35,9 @@ export const authOptions: NextAuthOptions = {
             user.password
           );
 
-          console.log('🔐 NextAuth: Проверка пароля', { isValid: isPasswordValid });
-
           if (!isPasswordValid) {
-            console.log('❌ NextAuth: Неверный пароль');
             return null;
           }
-
-          console.log('✅ NextAuth: Аутентификация успешна');
           return {
             id: user.id.toString(),
             email: user.email,
@@ -60,7 +45,6 @@ export const authOptions: NextAuthOptions = {
             role: user.role
           };
         } catch (error) {
-          console.error('❌ NextAuth: Ошибка аутентификации:', error);
           return null;
         }
       }

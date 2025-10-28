@@ -20,27 +20,33 @@ export class ProductController {
       const limit = parseInt(searchParams.get('limit') || '10');
       const skip = (page - 1) * limit;
 
-      let whereClause = 'WHERE p.isActive = 1';
+      let whereClause = '';
       let params: any[] = [];
       
+      const conditions = [];
+      
       if (search) {
-        whereClause += ' AND (p.name LIKE ? OR p.description LIKE ?)';
-        params.push(`%${search}%`, `%${search}%`);
+        conditions.push('(p.name_ru LIKE ? OR p.name_en LIKE ? OR p.name_tk LIKE ? OR p.description LIKE ?)');
+        params.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
       }
 
       if (category) {
-        whereClause += ' AND c.name = ?';
-        params.push(category);
+        conditions.push('(c.name_ru = ? OR c.name_en = ? OR c.name_tk = ?)');
+        params.push(category, category, category);
+      }
+      
+      if (conditions.length > 0) {
+        whereClause = 'WHERE ' + conditions.join(' AND ');
       }
 
-      const [products] = await pool.execute(
-        `SELECT p.*, c.name as categoryName 
+      // Используем query вместо execute для LIMIT и OFFSET
+      const [products] = await pool.query(
+        `SELECT p.*, c.name_ru as categoryName 
          FROM products p 
          LEFT JOIN categories c ON p.categoryId = c.id 
          ${whereClause} 
          ORDER BY p.createdAt DESC 
-         LIMIT ? OFFSET ?`,
-        [...params, limit, skip]
+         LIMIT ${Number(limit)} OFFSET ${Number(skip)}`
       );
 
       const [totalResult] = await pool.execute(
@@ -63,7 +69,6 @@ export class ProductController {
         }
       });
     } catch (error) {
-      console.error('Ошибка получения товаров:', error);
       return NextResponse.json(
         { success: false, error: 'Ошибка получения товаров' },
         { status: 500 }
@@ -78,7 +83,7 @@ export class ProductController {
   static async show(id: string) {
     try {
       const [products] = await pool.execute(
-        `SELECT p.*, c.name as categoryName 
+        `SELECT p.*, c.name_ru as categoryName 
          FROM products p 
          LEFT JOIN categories c ON p.categoryId = c.id 
          WHERE p.id = ?`,
@@ -99,7 +104,6 @@ export class ProductController {
         data: product
       });
     } catch (error) {
-      console.error('Ошибка получения товара:', error);
       return NextResponse.json(
         { success: false, error: 'Ошибка получения товара' },
         { status: 500 }
@@ -114,23 +118,23 @@ export class ProductController {
   static async store(request: NextRequest) {
     try {
       const body = await request.json();
-      const { name, description, categoryId, price, imageUrl } = body;
+      const { name_ru, name_en, name_tk, description, categoryId, price, imageUrl } = body;
 
-      if (!name || !categoryId) {
+      if (!name_ru || !name_en || !name_tk || !categoryId) {
         return NextResponse.json(
-          { success: false, error: 'Название и категория обязательны' },
+          { success: false, error: 'Названия товара на всех языках и категория обязательны' },
           { status: 400 }
         );
       }
 
       const [result] = await pool.execute(
-        'INSERT INTO products (name, description, categoryId, price, imageUrl, isActive, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())',
-        [name, description || null, parseInt(categoryId), price ? parseFloat(price) : null, imageUrl || null, true]
+        'INSERT INTO products (name_ru, name_en, name_tk, description, categoryId, price, imageUrl, isActive, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())',
+        [name_ru, name_en, name_tk, description || null, parseInt(categoryId), price ? parseFloat(price) : null, imageUrl || null, true]
       );
 
       const insertId = (result as any).insertId;
       const [products] = await pool.execute(
-        `SELECT p.*, c.name as categoryName 
+        `SELECT p.*, c.name_ru as categoryName 
          FROM products p 
          LEFT JOIN categories c ON p.categoryId = c.id 
          WHERE p.id = ?`,
@@ -142,10 +146,9 @@ export class ProductController {
         data: (products as any[])[0],
         message: 'Товар создан успешно'
       });
-    } catch (error) {
-      console.error('Ошибка создания товара:', error);
+    } catch (error: any) {
       return NextResponse.json(
-        { success: false, error: 'Ошибка создания товара' },
+        { success: false, error: 'Ошибка создания товара', details: error.message },
         { status: 500 }
       );
     }
@@ -158,18 +161,26 @@ export class ProductController {
   static async update(id: string, request: NextRequest) {
     try {
       const body = await request.json();
-      const { name, description, categoryId, price, imageUrl, isActive } = body;
+      const { name_ru, name_en, name_tk, description, categoryId, price, imageUrl, isActive } = body;
 
       let updateFields = [];
       let params = [];
 
-      if (name !== undefined) {
-        updateFields.push('name = ?');
-        params.push(name);
+      if (name_ru !== undefined) {
+        updateFields.push('name_ru = ?');
+        params.push(name_ru);
+      }
+      if (name_en !== undefined) {
+        updateFields.push('name_en = ?');
+        params.push(name_en);
+      }
+      if (name_tk !== undefined) {
+        updateFields.push('name_tk = ?');
+        params.push(name_tk);
       }
       if (description !== undefined) {
         updateFields.push('description = ?');
-        params.push(description);
+        params.push(description || null);
       }
       if (categoryId !== undefined) {
         updateFields.push('categoryId = ?');
@@ -181,11 +192,11 @@ export class ProductController {
       }
       if (imageUrl !== undefined) {
         updateFields.push('imageUrl = ?');
-        params.push(imageUrl);
+        params.push(imageUrl || null);
       }
       if (isActive !== undefined) {
         updateFields.push('isActive = ?');
-        params.push(isActive);
+        params.push(isActive ? 1 : 0);
       }
 
       updateFields.push('updatedAt = NOW()');
@@ -197,7 +208,7 @@ export class ProductController {
       );
 
       const [products] = await pool.execute(
-        `SELECT p.*, c.name as categoryName 
+        `SELECT p.*, c.name_ru as categoryName 
          FROM products p 
          LEFT JOIN categories c ON p.categoryId = c.id 
          WHERE p.id = ?`,
@@ -209,10 +220,9 @@ export class ProductController {
         data: (products as any[])[0],
         message: 'Товар обновлен успешно'
       });
-    } catch (error) {
-      console.error('Ошибка обновления товара:', error);
+    } catch (error: any) {
       return NextResponse.json(
-        { success: false, error: 'Ошибка обновления товара' },
+        { success: false, error: 'Ошибка обновления товара', details: error.message },
         { status: 500 }
       );
     }
@@ -230,7 +240,6 @@ export class ProductController {
         message: 'Товар удален успешно'
       });
     } catch (error) {
-      console.error('Ошибка удаления товара:', error);
       return NextResponse.json(
         { success: false, error: 'Ошибка удаления товара' },
         { status: 500 }

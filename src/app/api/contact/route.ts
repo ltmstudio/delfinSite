@@ -108,14 +108,7 @@ export async function POST(request: NextRequest) {
     );
 
   } catch (error) {
-    console.error('Ошибка отправки письма:', error);
     const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка';
-    console.error('Детали ошибки:', {
-      message: errorMessage,
-      code: (error as any)?.code,
-      command: (error as any)?.command,
-      response: (error as any)?.response
-    });
     
     // Получаем язык для сообщения об ошибке
     const url = new URL(request.url);

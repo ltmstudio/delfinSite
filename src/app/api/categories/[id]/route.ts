@@ -7,9 +7,10 @@ import { CategoryController } from '@/controllers/CategoryController';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  return CategoryController.show(params.id);
+  const { id } = await params;
+  return CategoryController.show(id);
 }
 
 /**
@@ -18,9 +19,10 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  return CategoryController.update(params.id, request);
+  const { id } = await params;
+  return CategoryController.update(id, request);
 }
 
 /**
@@ -29,7 +31,8 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  return CategoryController.destroy(params.id);
+  const { id } = await params;
+  return CategoryController.destroy(id);
 }

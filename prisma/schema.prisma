@@ -28,11 +28,13 @@ model User {
 
 model Product {
   id          Int      @id @default(autoincrement())
-  name        String
+  name_ru     String
+  name_en     String
+  name_tk     String
   description String?
   categoryId  Int
   price       Float?
-  imageUrl    String?
+  imageUrl    String?  @db.MediumText
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -45,9 +47,11 @@ model Product {
 
 model Category {
   id          Int      @id @default(autoincrement())
-  name        String
+  name_ru     String
+  name_en     String
+  name_tk     String
   description String?
-  imageUrl    String?
+  imageUrl    String?  @db.MediumText
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

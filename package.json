@@ -10,7 +10,7 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "db:seed": "node database/seeders/SimpleSeeder.js",
+    "db:seed": "node database/seeders/DatabaseSeeder.js",
     "db:seed:categories": "node database/seeders/CategorySeeder.js",
     "db:seed:products": "node database/seeders/ProductSeeder.js",
     "db:reset": "prisma migrate reset --force && npm run db:seed",
